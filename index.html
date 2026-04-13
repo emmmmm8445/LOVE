@@ -2,54 +2,86 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>For You ❤️</title>
+<title>For Hồ Lê Ngọc Mi ❤️</title>
 <style>
-  body {
-    margin: 0;
-    background: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+}
 
-  .heart {
-    position: relative;
-    width: 100px;
-    height: 90px;
-    animation: beat 1s infinite;
-  }
+canvas {
+  display: block;
+}
 
-  .heart:before,
-  .heart:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    width: 100px;
-    height: 150px;
-    background: red;
-    border-radius: 50px 50px 0 0;
-  }
-
-  .heart:before {
-    left: 100px;
-    transform: rotate(-45deg);
-    transform-origin: 0 100%;
-  }
-
-  .heart:after {
-    left: 0;
-    transform: rotate(45deg);
-    transform-origin: 100% 100%;
-  }
-
-  @keyframes beat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-  }
+.text {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: 30px;
+  font-family: Arial;
+}
 </style>
 </head>
 <body>
-  <div class="heart"></div>
+
+<div class="text">Hồ Lê Ngọc Mi ❤️</div>
+<canvas id="c"></canvas>
+
+<script>
+var c = document.getElementById("c");
+var ctx = c.getContext("2d");
+
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+
+var particles = [];
+
+function heart(t) {
+  return {
+    x: 16 * Math.pow(Math.sin(t), 3),
+    y: -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t))
+  };
+}
+
+function createFirework() {
+  for (var i = 0; i < 100; i++) {
+    var t = Math.random() * Math.PI * 2;
+    var h = heart(t);
+    particles.push({
+      x: c.width/2,
+      y: c.height/2,
+      vx: h.x,
+      vy: h.y,
+      life: 100
+    });
+  }
+}
+
+function draw() {
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(0, 0, c.width, c.height);
+
+  particles.forEach((p, i) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(p.x, p.y, 2, 2);
+
+    if (p.life <= 0) particles.splice(i, 1);
+  });
+
+  if (particles.length < 50) createFirework();
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+
 </body>
 </html>
